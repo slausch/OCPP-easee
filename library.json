@@ -1,12 +1,12 @@
 {
-    "id": "{80EFBF49-B7BC-F614-CE70-A2C25D354D23}",
-    "name": "OCPP Central System",
-    "author": "Symcon GmbH",
-    "url": "https://github.com/symcon/OCPP",
+    "id": "{B7BEA8CA-126F-441C-A9B3-6D4627743FB9}",
+    "name": "OCPP easee",
+    "author": "OCPP easee contributors",
+    "url": "https://github.com/slausch/OCPP-easee",
     "compatibility": {
         "version": "8.0"
     },
-    "version": "1.3",
+    "version": "0.1",
     "build": 0,
     "date": 0
 }

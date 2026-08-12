@@ -1,16 +1,16 @@
 {
-    "id": "{D048F0F0-0015-E50B-E8EC-731998FDFDA8}",
-    "name": "OCPP Splitter",
+    "id": "{FFD75EB7-E366-4648-AA4A-F973DF62E7A0}",
+    "name": "OCPP easee Splitter",
     "type": 2,
     "vendor": "",
     "aliases": [],
     "parentRequirements": [],
     "childRequirements": [
-        "{54E04042-D715-71A0-BA80-ADD8B6CDF151}"
+        "{2AA4AC25-4E6C-4C07-A6FD-03A36FC334EE}"
     ],
     "implemented": [
-        "{8B051B38-91B7-97B3-2F99-BCB86C0925FA}"
+        "{77EC111F-2054-4DB5-A9F7-877737764077}"
     ],
-    "prefix": "OCPP",
-    "url": "https://www.symcon.de/en/service/documentation/module-reference/ocpp/"
+    "prefix": "OCPPEASEE",
+    "url": "https://github.com/slausch/OCPP-easee"
 }

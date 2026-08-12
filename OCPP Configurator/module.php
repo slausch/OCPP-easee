@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-class OCPPConfigurator extends IPSModule
+class OCPPEaseeConfigurator extends IPSModule
 {
     public function Create()
     {
@@ -11,7 +11,7 @@ class OCPPConfigurator extends IPSModule
 
         $this->SetReceiveDataFilter('.*BootNotification.*');
 
-        $this->RequireParent('{D048F0F0-0015-E50B-E8EC-731998FDFDA8}');
+        $this->RequireParent('{FFD75EB7-E366-4648-AA4A-F973DF62E7A0}');
     }
 
     public function Destroy()
@@ -56,7 +56,7 @@ class OCPPConfigurator extends IPSModule
                 'ChargePointIdentity' => $chargePointIdentity,
                 'create'              => [
                     'name'          => $chargePointIdentity,
-                    'moduleID'      => '{2EDDBD05-F295-3A79-00BD-B2FC0F107134}',
+                    'moduleID'      => '{79BFA163-9D95-4D88-91C4-65F11FFBA15A}',
                     'configuration' => [
                         'ChargePointIdentity' => $chargePointIdentity,
                     ]
@@ -65,7 +65,7 @@ class OCPPConfigurator extends IPSModule
         }
 
         //Get the Instance and set the right ids or add it to the list
-        foreach (IPS_GetInstanceListByModuleID('{2EDDBD05-F295-3A79-00BD-B2FC0F107134}') as $instanceID) {
+        foreach (IPS_GetInstanceListByModuleID('{79BFA163-9D95-4D88-91C4-65F11FFBA15A}') as $instanceID) {
             if (IPS_GetInstance($this->InstanceID)['ConnectionID'] !== IPS_GetInstance($instanceID)['ConnectionID']) {
                 continue;
             }
@@ -85,7 +85,7 @@ class OCPPConfigurator extends IPSModule
                     'ChargePointIdentity'    => IPS_GetProperty($instanceID, 'ChargePointIdentity'),
                     'instanceID'             => $instanceID,
                     'create'                 => [
-                        'moduleID'      => '{2EDDBD05-F295-3A79-00BD-B2FC0F107134}',
+                        'moduleID'      => '{79BFA163-9D95-4D88-91C4-65F11FFBA15A}',
                         'configuration' => [
                             'ChargePointIdentity' => IPS_GetProperty($instanceID, 'ChargePointIdentity'),
                         ]

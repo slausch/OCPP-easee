@@ -6,7 +6,7 @@
   </php>
   <source>
     <include>
-      <directory suffix=".php">../OCPP</directory>
+      <directory suffix=".php">../OCPP Charging Point</directory>
     </include>
   </source>
 </phpunit>

@@ -1,16 +1,16 @@
 {
-    "id": "{C7E6CEB8-D0B7-52D2-72E7-DE8D35FD7069}",
-    "name": "OCPP Configurator",
+    "id": "{198F9C48-95D8-486D-9935-CDAF08B3EF2A}",
+    "name": "OCPP easee Configurator",
     "type": 4,
     "vendor": "",
     "aliases": [],
     "parentRequirements": [
-        "{8B051B38-91B7-97B3-2F99-BCB86C0925FA}"
+        "{77EC111F-2054-4DB5-A9F7-877737764077}"
     ],
     "childRequirements": [],
     "implemented": [
-        "{54E04042-D715-71A0-BA80-ADD8B6CDF151}"
+        "{2AA4AC25-4E6C-4C07-A6FD-03A36FC334EE}"
     ],
-    "prefix": "OCPP",
-    "url": "https://www.symcon.de/en/service/documentation/module-reference/ocpp/"
+    "prefix": "OCPPEASEE",
+    "url": "https://github.com/slausch/OCPP-easee"
 }

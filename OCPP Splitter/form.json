@@ -88,7 +88,7 @@
         },
         {
             "type": "Label",
-            "caption": "System Path: hook/ocpp/%d"
+            "caption": "System Path: hook/ocpp-easee/%d"
         },
         {
             "type": "Label",
@@ -97,13 +97,13 @@
         {
             "type": "ValidationTextBox",
             "caption": "Alternative 1: Systems requiring the full URL with separate endpoint",
-            "value": "ws://%s:3777/hook/ocpp/%d",
+            "value": "ws://%s:3777/hook/ocpp-easee/%d",
             "width": "600px"
         },
         {
             "type": "ValidationTextBox",
             "caption": "Alternative 2: Systems requiring the full URL including endpoint",
-            "value": "ws://%s:3777/hook/ocpp/%d/myEndpointName",
+            "value": "ws://%s:3777/hook/ocpp-easee/%d/myEndpointName",
             "width": "600px"
         }
     ]

@@ -32,7 +32,7 @@
                     "value": 3
                 }
             ],
-            "onChange": "OCPP_UIUpdateCP($id, $ValidateIdTag);"
+            "onChange": "OCPPEASEE_UIUpdateCP($id, $ValidateIdTag);"
         },
         {
             "type": "List",
@@ -91,13 +91,63 @@
                     }
                 }
             ]
+        },
+        {
+            "type": "ExpansionPanel",
+            "caption": "Smart Charging",
+            "items": [
+                {
+                    "type": "NumberSpinner",
+                    "name": "DefaultConnectorId",
+                    "caption": "Default connector ID",
+                    "minimum": 1,
+                    "maximum": 2
+                },
+                {
+                    "type": "NumberSpinner",
+                    "name": "MaximumChargingCurrent",
+                    "caption": "Maximum charging current",
+                    "minimum": 1,
+                    "maximum": 80,
+                    "suffix": " A"
+                },
+                {
+                    "type": "NumberSpinner",
+                    "name": "ChargingProfileId",
+                    "caption": "Charging profile ID",
+                    "minimum": 1
+                },
+                {
+                    "type": "NumberSpinner",
+                    "name": "ChargingProfileStackLevel",
+                    "caption": "Charging profile stack level",
+                    "minimum": 0,
+                    "maximum": 9
+                }
+            ]
         }
     ],
     "actions": [
         {
             "type": "Button",
             "caption": "Update",
-            "onClick": "OCPP_Update($id);"
+            "onClick": "OCPPEASEE_Update($id);"
+        },
+        {
+            "type": "Button",
+            "caption": "Refresh OCPP configuration",
+            "onClick": "OCPPEASEE_RefreshConfiguration($id);"
+        },
+        {
+            "type": "Button",
+            "caption": "Get composite schedule",
+            "onClick": "OCPPEASEE_GetCompositeSchedule($id, 0, 86400);"
+        },
+        {
+            "type": "Button",
+            "caption": "Clear charging profile",
+            "confirm": "Really clear the configured charging profile?",
+            "onClick": "OCPPEASEE_ClearChargingProfile($id, 0);"
         }
     ],
     "status": []

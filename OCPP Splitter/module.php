@@ -5,11 +5,11 @@ declare(strict_types=1);
 include_once __DIR__ . '/../libs/OCPPConstants.php';
 include_once __DIR__ . '/../libs/WebHookModule.php';
 
-class OCPPSplitter extends WebHookModule
+class OCPPEaseeSplitter extends OCPPEaseeWebHookModule
 {
     public function __construct($InstanceID)
     {
-        parent::__construct($InstanceID, 'ocpp/' . $InstanceID);
+        parent::__construct($InstanceID, 'ocpp-easee/' . $InstanceID);
     }
 
     public function Create()
@@ -29,6 +29,9 @@ class OCPPSplitter extends WebHookModule
     public function ForwardData($data)
     {
         $data = json_decode($data);
+        if (!isset($data->ChargePointIdentity, $data->Message)) {
+            throw new InvalidArgumentException('Invalid data from child');
+        }
         $this->send($data->ChargePointIdentity, $data->Message);
     }
 
@@ -53,14 +56,14 @@ class OCPPSplitter extends WebHookModule
     {
         $message = file_get_contents('php://input');
 
-        $this->SendDebug("Data", $message, 0);
+        $this->SendDebug('Data', $message, 0);
 
         if (!$message) {
-            echo "Please use WebSockets and send a valid OCPP message!";
+            echo 'Please use WebSockets and send a valid OCPP message!';
             return;
         }
 
-        $prefix = '/hook/ocpp/' . $this->InstanceID . '/';
+        $prefix = '/hook/ocpp-easee/' . $this->InstanceID . '/';
 
         if (strpos($_SERVER['REQUEST_URI'], $prefix) === false) {
             $this->SendDebug('Invalid', 'Hook is missing Charge Point Identity', 0);
@@ -72,27 +75,36 @@ class OCPPSplitter extends WebHookModule
         $this->SendDebug('Receive [' . $chargePointIdentity . ']', $message, 0);
 
         $message = json_decode($message);
-
-        // At the moment we do not process any CALLRESULT/CALLERROR messages
-        // Only TriggerMessage results will get them, and we do not process it for now
-        if ($message[0] != CALL) {
-            $this->SendDebug('Skipping', print_r($message, true), 0);
+        if (!is_array($message) || count($message) < 3) {
+            $this->SendDebug('Invalid', 'Malformed OCPP-J message', 0);
             return;
         }
 
-        // Send it to the children
+        // Forward calls and command results to the matching charging point.
         $responses = $this->SendDataToChildren(json_encode([
-            'DataID'              => '{54E04042-D715-71A0-BA80-ADD8B6CDF151}',
+            'DataID'              => '{2AA4AC25-4E6C-4C07-A6FD-03A36FC334EE}',
             'ChargePointIdentity' => $chargePointIdentity,
             'Message'             => $message
         ]));
 
-        // We want to check the response, if a charging was completed and we need to collect the charging data
-        foreach($responses as $response) {
-            $data = json_decode($response, true);
+        if ($message[0] == OCPPEASEE_CALLRESULT || $message[0] == OCPPEASEE_CALLERROR) {
+            return;
+        }
 
-            $ident = sprintf("Consumption_%s", $data['IdTag']);
-            $idTag = $data['IdTag'] ? sprintf('IdTag %s', $data['IdTag']) : "No IdTag";
+        if ($message[0] != OCPPEASEE_CALL) {
+            $this->SendDebug('Skipping', print_r($message, true), 0);
+            return;
+        }
+
+        // We want to check the response, if a charging was completed and we need to collect the charging data
+        foreach ($responses as $response) {
+            $data = json_decode($response, true);
+            if (!is_array($data) || !isset($data['IdTag'], $data['Consumption'])) {
+                continue;
+            }
+
+            $ident = sprintf('Consumption_%s', $data['IdTag']);
+            $idTag = $data['IdTag'] ? sprintf('IdTag %s', $data['IdTag']) : 'No IdTag';
             $this->RegisterVariableInteger($ident, sprintf($this->Translate('Consumption (%s)'), $idTag), [
                 'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION,
                 'SUFFIX'       => ' Wh'
@@ -122,13 +134,13 @@ class OCPPSplitter extends WebHookModule
         $message = json_encode($message);
         $this->SendDebug('Transmit [' . $chargePointIdentity . ']', $message, 0);
         $id = IPS_GetInstanceListByModuleID('{015A6EB8-D6E5-4B93-B496-0D3F77AE9FE1}')[0];
-        WC_PushMessage($id, '/hook/ocpp/' . $this->InstanceID . '/' . $chargePointIdentity, $message);
+        WC_PushMessage($id, '/hook/ocpp-easee/' . $this->InstanceID . '/' . $chargePointIdentity, $message);
     }
 
     private function getBootNotificationResponse(string $messageID)
     {
         return [
-            CALLRESULT,
+            OCPPEASEE_CALLRESULT,
             $messageID,
             [
                 'status'      => 'Accepted',
