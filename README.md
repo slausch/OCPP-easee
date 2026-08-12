@@ -1,6 +1,6 @@
 # OCPP easee
 
-Eigenständiges OCPP-1.6J-Central-System-Modul für IP-Symcon mit den für Easee
+Eigenständiges OCPP-1.6J-Central-System-Modul für IP-Symcon mit den für easee
 Direct OCPP benötigten Smart-Charging-Funktionen. Das Modul ist für IP-Symcon
 8.0 oder neuer vorgesehen und kann durch eigene Library-, Modul- und Interface-
 IDs parallel zum offiziellen Symcon-Modul `OCPP` installiert werden.
@@ -14,6 +14,8 @@ Später wird sie gegebenenfalls wieder zusammengeführt.
 Der Ausgangsstand ist Commit `826fd4a999549df3dd94388bc1716ba8dc943751`
 des offiziellen Repositories.
 
+Ein Dank geht auch an easee für die herausragende und schnelle Unterstützung!
+
 ## Geplanter Funktionsumfang
 
 - OCPP 1.6J über WebSocket als Central System
@@ -26,8 +28,8 @@ des offiziellen Repositories.
 - Lesen und Ändern unterstützter OCPP-Konfigurationswerte
 - Remote Start/Stop sowie TriggerMessage
 
-Die Easee-spezifische Umschaltung zwischen ein- und dreiphasigem Laden ist
-nicht Bestandteil dieses Moduls, da Easee sie in Direct OCPP nicht anbietet.
+Die easee-spezifische Umschaltung zwischen ein- und dreiphasigem Laden ist
+nicht Bestandteil dieses Moduls, da easee sie in Direct OCPP nicht anbietet.
 
 ## Referenzgerät
 
@@ -35,7 +37,7 @@ nicht Bestandteil dieses Moduls, da Easee sie in Direct OCPP nicht anbietet.
 - Firmware v343
 - Easee Direct OCPP, Q2-2026-Funktionsstand
 
-Die nicht öffentliche Easee-Unterlage wird nicht mit diesem Repository
+Die nicht öffentliche easee-Unterlage wird nicht mit diesem Repository
 veröffentlicht oder eingecheckt.
 
 ## Enthaltene Module
