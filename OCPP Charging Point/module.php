@@ -308,15 +308,19 @@ class OCPPEaseeChargingPoint extends IPSModule
             throw new InvalidArgumentException('Meter value sample interval must be 0 or between 30 and 3600 seconds');
         }
 
-        return $this->ChangeConfiguration('MeterValuesSampleInterval', (string) $Seconds);
+        return $this->ChangeConfiguration('MeterValueSampleInterval', (string) $Seconds);
     }
 
     public function RefreshConfiguration()
     {
+        // Rebuild the snapshot so removed or previously misspelled keys do not
+        // remain visible forever.
+        $this->SetValue('Configuration', '{}');
+
         $messageIds = [];
         foreach ([
             'SupportedFeatureProfiles',
-            'MeterValuesSampleInterval',
+            'MeterValueSampleInterval',
             'ClockAlignedDataInterval',
             'MeterValuesSampledData',
             'MeterValuesAlignedData',

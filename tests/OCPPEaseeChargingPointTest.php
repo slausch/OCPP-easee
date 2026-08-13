@@ -57,10 +57,10 @@ class OCPPEaseeChargingPointTest extends TestCase
 
     public function testGetConfigurationRequestsOnlyOneKey(): void
     {
-        $message = $this->invokePrivate('getConfigurationRequest', ['MeterValuesSampleInterval']);
+        $message = $this->invokePrivate('getConfigurationRequest', ['MeterValueSampleInterval']);
 
         $this->assertSame('GetConfiguration', $message[2]);
-        $this->assertSame(['MeterValuesSampleInterval'], $message[3]['key']);
+        $this->assertSame(['MeterValueSampleInterval'], $message[3]['key']);
     }
 
     public function testClearProfileTargetsConfiguredProfileId(): void
