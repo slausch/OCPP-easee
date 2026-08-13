@@ -207,16 +207,6 @@ class OCPPEaseeChargingPoint extends IPSModule
         return json_encode($form);
     }
 
-    public function Migrate(string $configurationDataString)
-    {
-        $configurationData = json_decode($configurationDataString, true);
-        if (isset($configurationData['configuration']['AutoStartTransaction']) && $configurationData['configuration']['AutoStartTransaction']) {
-            $configurationData['configuration']['ValidateIdTag'] = self::START_AUTOMATIC;
-            return json_encode($configurationData);
-        }
-        return '';
-    }
-
     public function Update()
     {
         $this->send($this->getTriggerMessageRequest('BootNotification'));

@@ -77,6 +77,11 @@ class OCPPEaseeChargingPointTest extends TestCase
         $this->instance->SetChargingCurrent(33.0, 1);
     }
 
+    public function testDoesNotOverrideLegacyMigrateSignature(): void
+    {
+        $this->assertFalse((new ReflectionClass($this->instance))->hasMethod('Migrate'));
+    }
+
     private function invokePrivate(string $method, array $arguments): mixed
     {
         $reflection = new ReflectionMethod($this->instance, $method);
