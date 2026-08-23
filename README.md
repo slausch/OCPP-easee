@@ -46,6 +46,10 @@ veröffentlicht oder eingecheckt.
 - **OCPP easee Configurator** - Erkennung und Einrichtung von Ladepunkten
 - **OCPP easee Charging Point** - Ladepunkt, Messwerte und Steuerung
 
+Der Ladepunkt stellt außerdem die von der Wallbox gemeldete Firmware sowie die
+zur zuletzt erfolgreich verwendeten IdTag gehörenden Benutzer- und E-Mail-Daten
+aus der zentralen beziehungsweise lokalen IdTag-Liste als Variablen bereit.
+
 ## Variablen und Darstellungen
 
 Das Modul verwendet die seit IP-Symcon 8 verfügbaren Präsentationsdefinitionen

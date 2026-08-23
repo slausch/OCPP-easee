@@ -42,9 +42,18 @@ class OCPPEaseeChargingPoint extends IPSModule
         $this->RegisterVariableString('SerialNumber', $this->Translate('Serial Number'), [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION
         ], 3);
-        $this->RegisterVariableString('IdTag', $this->Translate('Last Id Tag'), [
+        $this->RegisterVariableString('FirmwareVersion', $this->Translate('Firmware'), [
             'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION
         ], 4);
+        $this->RegisterVariableString('IdTag', $this->Translate('Last Id Tag'), [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION
+        ], 5);
+        $this->RegisterVariableString('LastUser', $this->Translate('Last User'), [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION
+        ], 6);
+        $this->RegisterVariableString('LastUserEmail', $this->Translate('Last User E-Mail'), [
+            'PRESENTATION' => VARIABLE_PRESENTATION_VALUE_PRESENTATION
+        ], 7);
         $this->RegisterVariableFloat('ChargingCurrent', $this->Translate('Charging current limit'), [
             'PRESENTATION' => VARIABLE_PRESENTATION_SLIDER,
             'MIN'          => 0,
@@ -144,6 +153,7 @@ class OCPPEaseeChargingPoint extends IPSModule
                 $this->SetValue('Vendor', $payload['chargePointVendor'] ?? '');
                 $this->SetValue('Model', $payload['chargePointModel'] ?? '');
                 $this->SetValue('SerialNumber', $payload['chargePointSerialNumber'] ?? '');
+                $this->SetValue('FirmwareVersion', $payload['firmwareVersion'] ?? '');
                 // No Feedback. Feedback is sent by the Splitter
                 break;
             case 'MeterValues':
@@ -419,6 +429,66 @@ class OCPPEaseeChargingPoint extends IPSModule
         }
 
         return 'Invalid';
+    }
+
+    private function updateLastUser(string $idTag, bool $accepted)
+    {
+        if (!$accepted) {
+            $this->SetValue('IdTag', '');
+            $this->SetValue('LastUser', '');
+            $this->SetValue('LastUserEmail', '');
+            return;
+        }
+
+        $this->SetValue('IdTag', $idTag);
+        $user = $this->findIdTagUser($idTag);
+        if ($user === null) {
+            $this->SetValue('LastUser', '');
+            $this->SetValue('LastUserEmail', '');
+            return;
+        }
+
+        $name = trim(implode(' ', array_filter([
+            (string) ($user['FirstName'] ?? ''),
+            (string) ($user['LastName'] ?? '')
+        ], static fn ($part) => $part !== '')));
+        $this->SetValue('LastUser', $name);
+        $this->SetValue('LastUserEmail', (string) ($user['EMail'] ?? ''));
+    }
+
+    private function findIdTagUser(string $idTag)
+    {
+        $lists = [];
+
+        // Prefer the central list on the splitter. This is the list shared by
+        // all charging points connected to this central system.
+        $parentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+        if ($parentID > 0) {
+            $centralList = json_decode(IPS_GetProperty($parentID, 'ValidIdTagList'), true);
+            if (is_array($centralList)) {
+                $lists[] = $centralList;
+            }
+        }
+
+        $localList = json_decode($this->ReadPropertyString('ValidIdTagList'), true);
+        if (is_array($localList)) {
+            $lists[] = $localList;
+        }
+
+        return $this->findIdTagUserInLists($idTag, $lists);
+    }
+
+    private function findIdTagUserInLists(string $idTag, array $lists)
+    {
+        foreach ($lists as $list) {
+            foreach ($list as $user) {
+                if (is_array($user) && (string) ($user['IdTag'] ?? '') === $idTag) {
+                    return $user;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function send($message, array $context = [])
@@ -814,7 +884,9 @@ class OCPPEaseeChargingPoint extends IPSModule
         ], ($payload['connectorId'] + 1) * 100 + 5);
         $this->SetValue($ident, 0);
 
-        $this->send($this->getStartTransactionResponse($messageID, $transactionId, $this->getIdTagStatus($payload['idTag'])));
+        $status = $this->getIdTagStatus($payload['idTag']);
+        $this->updateLastUser((string) $payload['idTag'], $status === 'Accepted');
+        $this->send($this->getStartTransactionResponse($messageID, $transactionId, $status));
     }
 
     private function processStopTransaction(string $messageID, $payload)
@@ -864,12 +936,7 @@ class OCPPEaseeChargingPoint extends IPSModule
         // Normally the IdTag is only transmitted on StartTransaction,
         // but some ChargePoints (e.g. Alfen) do not transmit it there
         // Therefore we need to just remember it and use it there
-        if ($status == 'Accepted') {
-            $this->SetValue('IdTag', $payload['idTag']);
-        }
-        else {
-            $this->SetValue('IdTag', '');
-        }
+        $this->updateLastUser((string) $payload['idTag'], $status === 'Accepted');
 
         $this->send($this->getAuthorizeResponse($messageID, $status));
     }

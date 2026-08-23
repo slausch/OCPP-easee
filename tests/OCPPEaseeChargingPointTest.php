@@ -82,6 +82,30 @@ class OCPPEaseeChargingPointTest extends TestCase
         $this->assertFalse((new ReflectionClass($this->instance))->hasMethod('Migrate'));
     }
 
+    public function testFindsUserInCentralIdTagList(): void
+    {
+        $user = $this->invokePrivate('findIdTagUserInLists', [
+            '04AABBCC',
+            [
+                [
+                    ['IdTag' => '04AABBCC', 'FirstName' => 'Erika', 'LastName' => 'Muster', 'EMail' => 'erika@example.com']
+                ],
+                [
+                    ['IdTag' => '04AABBCC', 'FirstName' => 'Local', 'LastName' => 'Fallback', 'EMail' => 'local@example.com']
+                ]
+            ]
+        ]);
+
+        $this->assertSame('Erika', $user['FirstName']);
+        $this->assertSame('Muster', $user['LastName']);
+        $this->assertSame('erika@example.com', $user['EMail']);
+    }
+
+    public function testReturnsNullForUnknownIdTag(): void
+    {
+        $this->assertNull($this->invokePrivate('findIdTagUserInLists', ['UNKNOWN', [[]]]));
+    }
+
     private function invokePrivate(string $method, array $arguments): mixed
     {
         $reflection = new ReflectionMethod($this->instance, $method);
