@@ -1095,13 +1095,16 @@ class OCPPEaseeChargingPoint extends IPSModule
          * Page 89
          * TriggerMessage.req
          */
+        $payload = ['requestedMessage' => $messageType];
+        if (in_array($messageType, ['MeterValues', 'StatusNotification'], true)) {
+            $payload['connectorId'] = $this->ReadPropertyInteger('DefaultConnectorId');
+        }
+
         return [
             OCPPEASEE_CALL,
             $this->generateMessageID(),
             'TriggerMessage',
-            [
-                'requestedMessage' => $messageType
-            ]
+            $payload
         ];
     }
 
